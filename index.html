@@ -2,31 +2,36 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <!-- Настройка, чтобы приложение выглядело как родное на смартфонах -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>LogiClash Web App</title>
+  <title>LogiClash</title>
   <style>
-    /* Полное обнуление и фиксация темной темы Web App */
     html, body {
       background-color: #000000;
       color: #ffffff;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
       height: 100%;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Базовые стили для экранов */
+    /* СКРЫТЫЕ ПЕРЕКЛЮЧАТЕЛИ СТРАНИЦ */
+    .tab-trigger { display: none !important; }
+
+    /* ЭКРАНЫ ПРИЛОЖЕНИЯ */
     .app-screen {
-      padding: calc(20px + env(safe-area-inset-top)) 20px calc(100px + env(safe-area-inset-bottom)) 20px;
+      display: none; /* Изначально все скрыты */
+      padding: calc(20px + env(safe-area-inset-top)) 20px 120px 20px;
       max-width: 500px;
       margin: 0 auto;
       box-sizing: border-box;
     }
 
-    /* Шапка проекта */
+    /* ЛОГИКА ПЕРЕКЛЮЧЕНИЯ: Показываем только выбранный экран */
+    #tab-lobby:checked ~ #screen-lobby { display: block !important; }
+    #tab-rating:checked ~ #screen-rating { display: block !important; }
+    #tab-profile:checked ~ #screen-profile { display: block !important; }
+
+    /* ШАПКА */
     .lobby-header {
       display: flex;
       justify-content: space-between;
@@ -34,14 +39,7 @@
       margin-bottom: 5px;
       margin-top: 10px;
     }
-    .lobby-title {
-      font-size: 28px;
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.5px;
-    }
-    
-    /* Компактный премиальный баланс */
+    .lobby-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
     .balance-top-right {
       background: #0b0f19;
       padding: 6px 14px;
@@ -49,19 +47,10 @@
       font-size: 14px;
       font-weight: 700;
       border: 1px solid #304163;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-    .lobby-subtitle {
-      font-size: 18px;
-      color: #aaaaaa;
-      margin-bottom: 25px;
-      margin-top: 0;
-      font-weight: 500;
-    }
+    .lobby-subtitle { font-size: 18px; color: #aaaaaa; margin-bottom: 25px; margin-top: 0; }
 
-    /* Карточки комнат (Бордовые неоновые, как на фото) */
+    /* КАРТОЧКИ КОМНАТ */
     .room-card {
       background: #050505;
       border: 1px solid #8b0000;
@@ -73,25 +62,12 @@
       align-items: center;
       box-shadow: 0 0 15px rgba(139, 0, 0, 0.35);
     }
-    .room-info {
-      display: flex;
-      flex-direction: column;
-    }
-    .room-name {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      color: #ffffff;
-    }
-    .room-status {
-      font-size: 13px;
-      font-weight: 500;
-    }
+    .room-info { display: flex; flex-direction: column; }
+    .room-name { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+    .room-status { font-size: 13px; }
     .status-free { color: #00ff66; }
     .status-wait { color: #ffcc00; }
     .status-play { color: #ff3333; }
-    
-    /* Бордовые кнопки */
     .lobby-btn {
       background-color: #8b0000;
       color: #ffffff;
@@ -102,18 +78,10 @@
       font-weight: bold;
       box-shadow: 0 0 12px rgba(139, 0, 0, 0.5);
       cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .lobby-btn:active {
-      transform: scale(0.95);
     }
 
-    /* Таблица рейтинга */
-    .rating-table {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    /* ТАБЛИЦА РЕЙТИНГА */
+    .rating-table { display: flex; flex-direction: column; gap: 12px; }
     .rating-row {
       background: #0b0f19;
       border: 1px solid #304163;
@@ -123,39 +91,13 @@
       align-items: center;
       justify-content: space-between;
     }
-    .rating-user {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .rating-position {
-      font-size: 18px;
-      font-weight: bold;
-      min-width: 26px;
-    }
-    .rating-avatar {
-      width: 36px;
-      height: 36px;
-      background: #202b42;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: #ffffff;
-    }
-    .rating-name {
-      font-size: 15px;
-      font-weight: 700;
-    }
-    .rating-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: #00ff66;
-    }
+    .rating-user { display: flex; align-items: center; gap: 12px; }
+    .rating-position { font-size: 18px; font-weight: bold; min-width: 26px; }
+    .rating-avatar { width: 36px; height: 36px; background: #202b42; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+    .rating-name { font-size: 15px; font-weight: 700; }
+    .rating-value { font-size: 14px; font-weight: 700; color: #00ff66; }
 
-    /* Экран профиля */
+    /* ПРОФИЛЬ */
     .profile-card {
       background: #0b0f19;
       border: 1px solid #304163;
@@ -165,54 +107,16 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin-bottom: 20px;
     }
-    .profile-main-avatar {
-      width: 80px;
-      height: 80px;
-      background: #202b42;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      margin-bottom: 14px;
-      border: 2px solid #ff3333;
-    }
-    .profile-username {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-    .profile-id {
-      font-size: 13px;
-      color: #707e94;
-      margin-bottom: 24px;
-    }
-    .profile-stats-grid {
-      display: flex;
-      width: 100%;
-      justify-content: space-around;
-      border-top: 1px solid #202b42;
-      padding-top: 18px;
-    }
-    .stat-box {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .stat-num {
-      font-size: 20px;
-      font-weight: 800;
-      color: #ffffff;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: #8a99ad;
-      font-weight: 600;
-    }
+    .profile-main-avatar { width: 80px; height: 80px; background: #202b42; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 14px; border: 2px solid #ff3333; }
+    .profile-username { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .profile-id { font-size: 13px; color: #707e94; margin-bottom: 24px; }
+    .profile-stats-grid { display: flex; width: 100%; justify-content: space-around; border-top: 1px solid #202b42; padding-top: 18px; }
+    .stat-box { display: flex; flex-direction: column; gap: 5px; }
+    .stat-num { font-size: 20px; font-weight: 800; }
+    .stat-label { font-size: 12px; color: #8a99ad; font-weight: 600; }
 
-    /* Фиксированное нижнее меню (Абсолютный монолит) */
+    /* НИЖНЕЕ ФИКСИРОВАННОЕ МЕНЮ НА CSS LABEL */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -222,43 +126,48 @@
       border-top: 1px solid #304163;
       display: flex;
       justify-content: space-around;
-      padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); /* Учет челок/полосок iOS/Android */
+      padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
       z-index: 999999;
     }
-    .nav-item {
+    .nav-tab {
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #8a99ad;
-      text-decoration: none;
       font-size: 12px;
       font-weight: 600;
       gap: 4px;
-      background: none;
-      border: none;
       cursor: pointer;
       width: 33.3%;
-      transition: color 0.2s ease;
+      text-align: center;
+      -webkit-user-select: none;
+      user-select: none;
     }
-    .nav-item.active {
-      color: #ff3333; /* Ярко-красный цвет активной вкладки */
-    }
-    .nav-icon {
-      font-size: 22px;
-    }
+    .nav-icon { font-size: 22px; }
+
+    /* ЦВЕТ АКТИВНОЙ ВКЛАДКИ МЕНЮ */
+    #tab-lobby:checked ~ .bottom-nav .nav-tab[for="tab-lobby"] { color: #ff3333; }
+    #tab-rating:checked ~ .bottom-nav .nav-label-fix[for="tab-rating"] { color: #ff3333; }
+    #tab-profile:checked ~ .bottom-nav .nav-label-fix[for="tab-profile"] { color: #ff3333; }
+    /* Универсальный класс для подсветки */
+    #tab-rating:checked ~ .bottom-nav .nav-tab[for="tab-rating"] { color: #ff3333; }
+    #tab-profile:checked ~ .bottom-nav .nav-tab[for="tab-profile"] { color: #ff3333; }
   </style>
 </head>
 <body>
 
-  <!-- ЭКРАН 1: ИГРЫ (ЛОББИ) -->
-  <div id="game-lobby" class="app-screen">
+  <!-- Скрытые переключатели страниц -->
+  <input type="radio" name="screens" id="tab-lobby" class="tab-trigger" checked>
+  <input type="radio" name="screens" id="tab-rating" class="tab-trigger">
+  <input type="radio" name="screens" id="tab-profile" class="tab-trigger">
+
+  <!-- ЭКРАН 1: ИГРЫ -->
+  <div id="screen-lobby" class="app-screen">
     <div class="lobby-header">
       <div class="lobby-title">LogiClash</div>
       <div class="balance-top-right">🪙 0.00 Gram</div>
     </div>
     <div class="lobby-subtitle">Комнаты</div>
-    
-    <!-- 10 комнат лобби -->
     <div class="room-card"><div class="room-info"><div class="room-name">Комната 1 (0/2)</div><div class="room-status status-free">● Свободно | Сумма: от 1 Gram</div></div><button class="lobby-btn">Создать</button></div>
     <div class="room-card"><div class="room-info"><div class="room-name">Комната 2 (1/2)</div><div class="room-status status-wait">● Ожидание | Сумма: 5 Gram</div></div><button class="lobby-btn">Играть</button></div>
     <div class="room-card"><div class="room-info"><div class="room-name">Комната 3 (2/2)</div><div class="room-status status-play">● Игра идет | Сумма: 10 Gram</div></div><button class="lobby-btn" style="opacity:0.4; background:#222!important; border:1px solid #444!important; box-shadow:none!important; cursor:not-allowed;">В игре</button></div>
@@ -272,31 +181,23 @@
   </div>
 
   <!-- ЭКРАН 2: РЕЙТИНГ -->
-  <div id="rating-screen" class="app-screen">
+  <div id="screen-rating" class="app-screen">
     <div class="lobby-header">
       <div class="lobby-title">LogiClash</div>
       <div class="balance-top-right">🪙 0.00 Gram</div>
     </div>
     <div class="lobby-subtitle">Рейтинг игроков</div>
-    
     <div class="rating-table">
-      <div class="rating-row">
-        <div class="rating-user">
-          <span class="rating-position">🥇</span>
-          <div class="rating-avatar" style="border: 1px solid #ffcc00;">AN</div>
-          <span class="rating-name">Alex_Net</span>
-        </div>
-        <span class="rating-value">+1,420 Gram</span>
-      </div>
-      <div class="rating-row">
-        <div class="rating-user">
-          <span class="rating-position">🥈</span>
-          <div class="rating-avatar" style="border: 1px solid #cccccc;">CB</div>
-          <span class="rating-name">CryptoBoss</span>
-        </div>
-        <span class="rating-value">+980 Gram</span>
-      </div>
-      <div class="rating-row">
-        <div class="rating-user">
-          <span class="rating-position">🥉</span>
+      <div class="rating-row"><div class="rating-user"><span class="rating-position">🥇</span><div class="rating-avatar" style="border: 1px solid #ffcc00;">AN</div><span class="rating-name">Alex_Net</span></div><span class="rating-value">+1,420 Gram</span></div>
+      <div class="rating-row"><div class="rating-user"><span class="rating-position">🥈</span><div class="rating-avatar" style="border: 1px solid #cccccc;">CB</div><span class="rating-name">CryptoBoss</span></div><span class="rating-value">+980 Gram</span></div>
+      <div class="rating-row"><div class="rating-user"><span class="rating-position">🥉</span><div class="rating-avatar" style="border: 1px solid #cd7f32;">DV</div><span class="rating-name">Dmitry_V</span></div><span class="rating-value">+640 Gram</span></div>
+    </div>
+  </div>
 
+  <!-- ЭКРАН 3: ПРОФИЛЬ -->
+  <div id="screen-profile" class="app-screen">
+    <div class="lobby-header">
+      <div class="lobby-title">LogiClash</div>
+      <div class="balance-top-right">🪙 0.00 Gram</div>
+    </div>
+    <div class="lobby-subtitle">Мой профиль</div>
